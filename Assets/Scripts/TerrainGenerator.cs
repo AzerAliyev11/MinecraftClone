@@ -97,21 +97,41 @@ public class TerrainGenerator : MonoBehaviour
 
     }
 
+    int Noise(int x, int y, float scale, float magnitude)
+    {
+        int noise = (int)(Mathf.PerlinNoise((float)x/scale, (float)y/scale) * magnitude);
+
+        return noise;
+    }
+
     void GenerateTerrain()
     {
         //this function creates block information
         //1 - grass , 2 - rock
-        blocks = new byte[10,10];
+        blocks = new byte[100,100];
 
         for (int px = 0; px < blocks.GetLength(0); px++)
         {
+            int stone = Noise(px, 0, 50, 30);
+            stone += Noise(px, 0, 20, 20);
+            stone += Noise(px, 0, 10, 10);
+            stone += 50;
+
+            int dirt = Noise(px, 0, 100, 40);
+            dirt += Noise(px, 0, 50, 30);
+            dirt += 50;
             for (int py = 0; py < blocks.GetLength(1); py++)
             {
-                if(py < 5)
+                if(py < stone)
                 {
                     blocks[px, py] = 2;
+
+                    if(Noise(px, py, 20, 30) > 18 && py < 70)
+                    {
+                        blocks[px, py] = 0;
+                    }
                 }
-                else if(py == 5)
+                else if(py < dirt)
                 {
                     blocks[px, py] = 1;
                 }
